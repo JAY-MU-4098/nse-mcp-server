@@ -6,7 +6,7 @@ from utils.option_chain import get_expiry_dates, get_option_chain_data, get_curr
 def get_description(func):
     if not func.__doc__:
         return "No description available"
-    return func.__doc__.strip().split("\n")[0]
+    return func.__doc__.strip()
 
 
 TOOLS = {
