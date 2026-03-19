@@ -1,6 +1,4 @@
-import pprint
-
-from nse_client import nse
+from .nse_client import nse
 
 def get_expiry_dates(symbol:str):
     """
