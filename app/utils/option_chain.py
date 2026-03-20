@@ -182,7 +182,7 @@ def get_index_info(index_name: str):
 
 def get_delivery_history(symbol: str, from_date: str, to_date: str):
     """
-    Get delivery history for a given NSE symbol.
+    Get delivery history for a given NSE symbol including OHCLV data.
 
     Args:
         symbol (str): NSE symbol like RELIANCE, SBIN
