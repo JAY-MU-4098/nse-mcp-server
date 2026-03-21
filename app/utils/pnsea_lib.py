@@ -1,4 +1,4 @@
-from .nse_client import nse
+from .pnsea_nse_client import nse
 
 def get_expiry_dates(symbol:str):
     """
