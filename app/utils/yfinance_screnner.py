@@ -277,14 +277,14 @@ def run_screener(
         Supports partial match (e.g., "RELIANCE" matches "RELIANCE.NS").
 
     index : str, optional
-        Filter results by index (e.g., "NIFTY50", "BANKNIFTY").
+        Filter results by index (e.g., "NIFTY", "BANKNIFTY").
         Applied after screener results.
 
     --- Returns ---
     list[dict]
         List of matching instruments with normalized fields:
 
-        • symbol → Stock ticker (e.g., RELIANCE.NS)
+        • symbol → Stock ticker (e.g., RELIANCE)
         • price → Current market price
         • change_percent → % price change
         • volume → Trading volume
@@ -324,7 +324,7 @@ def run_screener(
     Filter by index:
     run_screener(
         predefined="nse_top_gainers",
-        index="NIFTY50"
+        index="NIFTY"
     )
 
     Filter by symbols:
