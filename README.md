@@ -3,9 +3,12 @@
 ⚡ Powered by `uv` + `pyproject.toml` for modern, fast, and reproducible Python environments
 
 A powerful MCP (Model Context Protocol) server for accessing NSE (National Stock Exchange of India) data, financial insights, and advanced stock screening.
+---
 
 🔗 GitHub: https://github.com/JAY-MU-4098/nse-mcp-server
+
 🔗 LinkedIn: https://www.linkedin.com/in/jay-gogra-108991237/
+
 ---
 
 ## 📌 Features
