@@ -1,6 +1,7 @@
 from .pnsea_nse_client import nse
 
-def get_expiry_dates(symbol:str):
+
+def get_expiry_dates(symbol: str):
     """
     Get expiry dates for an NSE symbol.
 
@@ -23,7 +24,7 @@ def get_expiry_dates(symbol:str):
         }
 
 
-def get_symbol_info(symbol:str):
+def get_symbol_info(symbol: str):
     """
     Get all the information of any equity NSE symbol.
 
@@ -47,7 +48,7 @@ def get_symbol_info(symbol:str):
         }
 
 
-def get_current_price(symbol:str):
+def get_current_price(symbol: str):
     """
         Get current price (underlying price)  for an NSE symbols.
 
@@ -73,7 +74,7 @@ def get_current_price(symbol:str):
         }
 
 
-def get_option_chain_data(symbol:str, expiry_date: str|None=None):
+def get_option_chain_data(symbol: str, expiry_date: str | None = None):
     """
     Get option chain data for an NSE symbol and expiry date.
 
@@ -119,7 +120,6 @@ def get_market_status():
             "status": "fail",
             "data": str(e)
         }
-
 
 
 def get_all_indices():
@@ -331,10 +331,10 @@ def get_fno_stocks():
 
 
 def get_mf_insider_data(
-    from_date: str = None,
-    to_date: str = None,
-    isin: str = None,
-    symbol: str = None
+        from_date: str = None,
+        to_date: str = None,
+        isin: str = None,
+        symbol: str = None
 ):
     """
     Get Mutual Fund insider trading data.
@@ -380,15 +380,15 @@ def get_mf_insider_data(
 
 def convert_to_strike(number, gap):
     remainder = number % gap
-    if remainder < ( gap // 2):
+    if remainder < (gap // 2):
         rounded_number = number - remainder
     else:
-        rounded_number = number + ( gap - remainder)
+        rounded_number = number + (gap - remainder)
 
     return rounded_number
 
 
-def get_filtered_options(symbol: str = "NIFTY", strike_gap_percentage:float = 2, premium_percentage:float=0.5):
+def get_filtered_options(symbol: str = "NIFTY", strike_gap_percentage: float = 2, premium_percentage: float = 0.5):
     """
     Get filtered NSE option chain data based on premium and strike range.
 
@@ -404,31 +404,26 @@ def get_filtered_options(symbol: str = "NIFTY", strike_gap_percentage:float = 2,
     try:
         nifty_data, expiries, current_price = nse.options.option_chain(symbol)
 
-        length = len(nifty_data)
-        gap_size = nifty_data.iloc[(length//2)]["strikePrice"] - nifty_data.iloc[(length//2)-1]["strikePrice"]
-        spot = convert_to_strike(current_price, gap_size)
-
-        nifty_data["CE_premium"] = (nifty_data["CE_lastPrice"] - (spot - nifty_data["strikePrice"]))
-        nifty_data["PE_premium"] = (nifty_data["PE_lastPrice"] - (nifty_data["strikePrice"] - spot))
+        nifty_data["CE_premium"] = (nifty_data["CE_lastPrice"] - (current_price - nifty_data["strikePrice"]))
+        nifty_data["PE_premium"] = (nifty_data["PE_lastPrice"] - (nifty_data["strikePrice"] - current_price))
 
         cols = ["strikePrice", "CE_lastPrice", "CE_premium", "PE_lastPrice", "PE_premium"]
 
-        lower_strike = convert_to_strike(current_price * (1 - (strike_gap_percentage/100)), gap_size)
-        upper_strike = convert_to_strike(current_price * (1 + (strike_gap_percentage/100)), gap_size)
+        lower_strike = current_price * (1 - (strike_gap_percentage / 100))
+        upper_strike = current_price * (1 + (strike_gap_percentage / 100))
 
-        premium_price = current_price * (premium_percentage/100)
+        premium_price = current_price * (premium_percentage / 100)
 
         filtered_data = nifty_data[
             (
                     (nifty_data["CE_premium"] <= premium_price) |
                     (nifty_data["PE_premium"] <= premium_price)
-           ) & (
+            ) & (
                     (nifty_data["strikePrice"] >= lower_strike) &
                     (nifty_data["strikePrice"] <= upper_strike)
             )
 
-
-        ][cols].reset_index(drop=True)
+            ][cols].reset_index(drop=True)
 
         return {
             "status": "success",
