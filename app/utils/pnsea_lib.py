@@ -376,3 +376,67 @@ def get_mf_insider_data(
             "status": "fail",
             "data": str(e)
         }
+
+
+def convert_to_strike(number, gap):
+    remainder = number % gap
+    if remainder < ( gap // 2):
+        rounded_number = number - remainder
+    else:
+        rounded_number = number + ( gap - remainder)
+
+    return rounded_number
+
+
+def get_filtered_options(symbol: str = "NIFTY", strike_gap_percentage:float = 2, premium_percentage:float=0.5):
+    """
+    Get filtered NSE option chain data based on premium and strike range.
+
+    Args:
+        symbol (str, optional): Index name like NIFTY or BANKNIFTY or SBIN
+        premium_percentage (float, optional): Max premium percentage relative to spot price
+        strike_gap_percentage (float, optional): Strike range percentage around current price
+
+    Returns:
+        dict: status, filtered option chain data
+    """
+
+    try:
+        nifty_data, expiries, current_price = nse.options.option_chain(symbol)
+
+        length = len(nifty_data)
+        gap_size = nifty_data.iloc[(length//2)]["strikePrice"] - nifty_data.iloc[(length//2)-1]["strikePrice"]
+        spot = convert_to_strike(current_price, gap_size)
+
+        nifty_data["CE_premium"] = (nifty_data["CE_lastPrice"] - (spot - nifty_data["strikePrice"]))
+        nifty_data["PE_premium"] = (nifty_data["PE_lastPrice"] - (nifty_data["strikePrice"] - spot))
+
+        cols = ["strikePrice", "CE_lastPrice", "CE_premium", "PE_lastPrice", "PE_premium"]
+
+        lower_strike = convert_to_strike(current_price * (1 - (strike_gap_percentage/100)), gap_size)
+        upper_strike = convert_to_strike(current_price * (1 + (strike_gap_percentage/100)), gap_size)
+
+        premium_price = current_price * (premium_percentage/100)
+
+        filtered_data = nifty_data[
+            (
+                    (nifty_data["CE_premium"] <= premium_price) |
+                    (nifty_data["PE_premium"] <= premium_price)
+           ) & (
+                    (nifty_data["strikePrice"] >= lower_strike) &
+                    (nifty_data["strikePrice"] <= upper_strike)
+            )
+
+
+        ][cols].reset_index(drop=True)
+
+        return {
+            "status": "success",
+            "data": filtered_data.to_dict(orient="records")
+        }
+
+    except Exception as e:
+        return {
+            "status": "fail",
+            "data": str(e)
+        }

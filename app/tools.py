@@ -1,6 +1,6 @@
 from utils.pnsea_lib import get_expiry_dates, get_option_chain_data, get_current_price, get_symbol_info, \
     get_market_status, get_all_indices, get_index_info, get_delivery_history, get_insider_data, get_pledged_data, \
-    get_sast_data, get_fno_stocks, get_mf_insider_data
+    get_sast_data, get_fno_stocks, get_mf_insider_data, get_filtered_options
 
 from utils.yfinance_screnner import run_screener, list_predefined_screeners
 
@@ -499,6 +499,28 @@ TOOLS = {
             },
             "required": ["symbol"]
         }
-    }
+    },
 
+    "get_filtered_options": {
+        "function": get_filtered_options,
+        "description": get_description(get_filtered_options),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "symbol": {
+                    "type": "string",
+                    "description": "Index name like NIFTY or BANKNIFTY or SBIN"
+                },
+                "premium_percentage": {
+                    "type": "number",
+                    "description": "Maximum premium percentage relative to current price (used to filter low premium options)"
+                },
+                "strike_gap_percentage": {
+                    "type": "number",
+                    "description": "Percentage range around current price to filter strike prices"
+                }
+            },
+            "required": []
+        }
+    }
 }
