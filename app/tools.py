@@ -8,6 +8,7 @@ from utils.yfinance_lib import get_financials, get_esg_data, get_holders_data, g
     get_stock_news, get_balance_sheet_data, get_analyst_insights, get_insider_activity, get_corporate_actions, \
     get_earnings_calendar, get_earnings_forecast, get_company_profile
 
+from utils.finance_astrology import get_samay_zone
 
 def get_description(func):
     if not func.__doc__:
@@ -521,6 +522,27 @@ TOOLS = {
                 }
             },
             "required": []
+        }
+    },
+
+    "get_samay_zone": {
+        "function": get_samay_zone,
+        "description": get_description(get_samay_zone),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "start_dt_str": {
+                    "type": "string",
+                    "description": "Start datetime in format 'YYYY-MM-DD HH:MM'. Example: '2026-04-23 11:30'"
+                },
+                "count": {
+                    "type": "integer",
+                    "description": "Number of future candle timestamps to generate using 43-candle step logic",
+                    "default": 5,
+                    "minimum": 1
+                }
+            },
+            "required": ["start_dt_str"]
         }
     }
 }
